@@ -4,7 +4,7 @@ import InfiniteScroll from "react-infinite-scroller";
 import { Box, CircularProgress, Container } from "@mui/material";
 
 import { Modal } from "./components/Modal";
-import { UsersData } from "./components/UsersData/UsersData";
+import { UsersData } from "./components/UsersData";
 import { ModalContext } from "./modal-context";
 
 import { dataByPage } from "./api/constants/const";
@@ -15,7 +15,6 @@ import "./index.scss";
 
 export const App: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
-  const [, setError] = useState("");
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(false);
 
@@ -28,32 +27,30 @@ export const App: React.FC = () => {
   }, []);
 
   const loadMoreUsers = async () => {
-    const response = await client.get<User>(`?_page=${page + 1}&_limit=${dataByPage}`);
-
-    await setUsers((prevList) => {
-      return [...prevList, ...response];
-    });
-
-    if (!response) {
-      setError("error");
-    } else {
-      setPage((prev) => prev + 1);
+    try {
+      const response = await client.get<User>(`?_page=${page + 1}&_limit=${dataByPage}`);
+      await setUsers((prevList) => {
+        return [...prevList, ...response];
+      });
+      await setPage((prev) => prev + 1);
+    } catch (error) {
+      console.error(error);
     }
   };
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch(`${BASE_URL}?_page=${1}&_limit=${dataByPage}`);
+      try {
+        const response = await fetch(`${BASE_URL}?_page=${1}&_limit=${dataByPage}`);
+        if (!response.ok) {
+          throw new Error(`error with db ${response.statusText}`);
+        } else {
+          const total = Number(response.headers.get("X-Total-Count"));
 
-      if (!response.ok) {
-        throw new Error(`error with db ${response.statusText}`);
-      } else {
-        const total = Number(response.headers.get("X-Total-Count"));
-
-        await setHasMore(total > page * dataByPage);
-      }
-      if (!response) {
-        setError("error");
+          await setHasMore(total > page * dataByPage);
+        }
+      } catch (error) {
+        console.error(error);
       }
     };
     fetchData();

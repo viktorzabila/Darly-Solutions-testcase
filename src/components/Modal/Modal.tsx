@@ -20,7 +20,7 @@ export const DialogModal: React.FC = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm({
     resolver: yupResolver(formResolver),
   });
@@ -113,12 +113,19 @@ export const DialogModal: React.FC = () => {
         </Grid>
         <Grid sx={{ marginTop: "1rem" }} container spacing={3} justifyContent={"space-around"}>
           <Grid item sm={4}>
-            <Button color="success" fullWidth onClick={handleClose} size="large">
+            <Button color="success" fullWidth onClick={handleClose} size="large" sx={{ border: 1 }}>
               Cancel
             </Button>
           </Grid>
           <Grid item sm={4}>
-            <Button color="success" fullWidth onClick={handleSubmit(createPost)} size="large">
+            <Button
+              color="success"
+              sx={{ border: 1 }}
+              fullWidth
+              disabled={!isDirty}
+              onClick={handleSubmit(createPost)}
+              size="large"
+            >
               Add
             </Button>
           </Grid>

@@ -3,10 +3,9 @@ import { TableBody, TableCell, TableContainer, TableRow, Paper } from "@mui/mate
 import "aos/dist/aos.css";
 import AOS from "aos";
 
-import { CreateButton } from "../CreateButton/CreateButton";
+import { CreateButton } from "../CreateButton";
 
 import { User } from "../../types/User";
-import "./../../index.scss";
 
 type Props = {
   users: User[];
@@ -14,32 +13,6 @@ type Props = {
 
 export const UsersData: React.FC<Props> = (props) => {
   const { users } = props;
-
-  function createData(
-    id: number,
-    firstName: string,
-    lastName: string,
-    address: string,
-    email: string,
-    gender: string
-  ) {
-    return {
-      id,
-      firstName,
-      lastName,
-      address,
-      email,
-      gender,
-    };
-  }
-
-  const rows: User[] = [];
-
-  users.forEach((user) => {
-    rows.push(
-      createData(user.id, user.firstName, user.lastName, user.address, user.email, user.gender)
-    );
-  });
 
   useEffect(() => {
     AOS.init({ duration: 600, easing: "ease-in-sine", offset: 0 });
